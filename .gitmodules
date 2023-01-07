@@ -1,0 +1,3 @@
+[submodule "blinkstick/include/blinkstickcpp"]
+	path = blinkstick/include/blinkstickcpp
+	url = git@github.com:teekae/blinkstickcpp.git
