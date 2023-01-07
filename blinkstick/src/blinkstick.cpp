@@ -1,10 +1,13 @@
-#include <cstdio>
+#include <iostream>
+#include <memory>
+
+#include "blinkstick_msgs/msg/blink.hpp"
 
 int main(int argc, char ** argv)
 {
   (void) argc;
   (void) argv;
 
-  printf("hello world blinkstick package\n");
+  std::cout << "hello world blink stick package" << std::endl;
   return 0;
 }
