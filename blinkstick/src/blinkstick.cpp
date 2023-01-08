@@ -2,6 +2,9 @@
 #include <memory>
 
 #include "blinkstick_msgs/msg/blink.hpp"
+#include "blinkstick/device.hpp"
+#include "blinkstick/blinkstick.hpp"
+
 
 int main(int argc, char ** argv)
 {

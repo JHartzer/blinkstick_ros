@@ -43,6 +43,7 @@ target_include_directories(blinkstickcpp PUBLIC
 
 add_executable(${PROJECT_NAME} src/blinkstick.cpp)
 ament_target_dependencies(${PROJECT_NAME} blinkstick_msgs)
+target_link_libraries(${PROJECT_NAME} blinkstickcpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
