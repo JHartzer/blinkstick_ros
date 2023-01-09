@@ -17,9 +17,12 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# find_package(rclcpp REQUIRED)
-# find_package(std_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(blinkstick_msgs REQUIRED)
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/include/blinkstickcpp/cmake)
+find_package(HIDAPI REQUIRED)
 
 # blinkstickcpp sources
 set(blinkstickcpp_srcs
@@ -27,8 +30,14 @@ set(blinkstickcpp_srcs
     include/blinkstickcpp/blinkstickcpp/src/device.cpp
 )
 
-# Create library with EKF sources
+# Create library with blinkstickcpp sources
 add_library(blinkstickcpp ${blinkstickcpp_srcs})
+target_link_libraries(blinkstickcpp PRIVATE ${HIDAPI_LIBRARY})
+
+target_include_directories(blinkstickcpp PUBLIC
+    include/blinkstickcpp/blinkstickcpp/include
+    ${PROJECT_BINARY_DIR}/blinkstickcpp/
+)
 
 # Generate Export Headd
 include(GenerateExportHeader)
@@ -36,13 +45,8 @@ generate_export_header(blinkstickcpp
     EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/blinkstickcpp/blinkstick/export.hpp
 )
 
-target_include_directories(blinkstickcpp PUBLIC
-    include/blinkstickcpp/blinkstickcpp/include
-    ${PROJECT_BINARY_DIR}/blinkstickcpp/
-)
-
 add_executable(${PROJECT_NAME} src/blinkstick.cpp)
-ament_target_dependencies(${PROJECT_NAME} blinkstick_msgs)
+ament_target_dependencies(${PROJECT_NAME} rclcpp std_msgs blinkstick_msgs)
 target_link_libraries(${PROJECT_NAME} blinkstickcpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
