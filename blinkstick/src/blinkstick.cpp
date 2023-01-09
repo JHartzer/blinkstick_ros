@@ -17,6 +17,8 @@ public:
   MinimalSubscriber()
   : Node("minimal_subscriber")
   {
+    RCLCPP_INFO(this->get_logger(), "Initialize Node");
+
     subscription_ = this->create_subscription<std_msgs::msg::String>(
       "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
 
@@ -27,7 +29,8 @@ public:
     blinkstick::enable_logging();
     m_device = blinkstick::find();
     if (!m_device.is_valid()) {
-      std::cout << "No connected BlinkStick\n";
+      RCLCPP_ERROR(this->get_logger(), "No connected BlinkStick");
+      rclcpp::shutdown();
     }
 
     m_led_count = m_device.get_led_count();
