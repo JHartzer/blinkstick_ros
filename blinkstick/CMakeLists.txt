@@ -56,7 +56,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 target_compile_features(${PROJECT_NAME} PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 # Generate ROS Publisher Test Node
-add_executable(${PROJECT_NAME}_test src/test_blinkstick.cpp)
+add_executable(${PROJECT_NAME}_test test/test_blinkstick.cpp)
 ament_target_dependencies(${PROJECT_NAME}_test rclcpp std_msgs blinkstick_msgs)
 
 install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_test
