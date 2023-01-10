@@ -39,12 +39,13 @@ target_include_directories(blinkstickcpp PUBLIC
     ${PROJECT_BINARY_DIR}/blinkstickcpp/
 )
 
-# Generate Export Headd
+# Generate Export Header
 include(GenerateExportHeader)
-generate_export_header(blinkstickcpp 
+generate_export_header(blinkstickcpp
     EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/blinkstickcpp/blinkstick/export.hpp
 )
 
+# Generate ROS Subscriber Node
 add_executable(${PROJECT_NAME} src/blinkstick.cpp)
 ament_target_dependencies(${PROJECT_NAME} rclcpp std_msgs blinkstick_msgs)
 target_link_libraries(${PROJECT_NAME} blinkstickcpp)
@@ -54,7 +55,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include>)
 target_compile_features(${PROJECT_NAME} PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-install(TARGETS ${PROJECT_NAME}
+# Generate ROS Publisher Test Node
+add_executable(${PROJECT_NAME}_test src/test_blinkstick.cpp)
+ament_target_dependencies(${PROJECT_NAME}_test rclcpp std_msgs blinkstick_msgs)
+
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_test
     DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
