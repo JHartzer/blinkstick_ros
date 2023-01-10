@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 
-#include "blinkstick_msgs/msg/blink.hpp"
+#include "blinkstick_msgs/msg/color.hpp"
 #include "blinkstick/device.hpp"
 #include "blinkstick/blinkstick.hpp"
 
@@ -18,7 +18,7 @@ public:
   {
     RCLCPP_INFO(this->get_logger(), "Initialize Node");
 
-    m_subscriber = this->create_subscription<blinkstick_msgs::msg::Blink>(
+    m_subscriber = this->create_subscription<blinkstick_msgs::msg::Color>(
       "blinkstick", 10, std::bind(&BlinkstickNode::topic_callback, this, _1));
 
     blinkstick::enable_logging();
@@ -32,7 +32,7 @@ public:
   }
 
 private:
-  void topic_callback(const blinkstick_msgs::msg::Blink::SharedPtr msg) const
+  void topic_callback(const blinkstick_msgs::msg::Color::SharedPtr msg) const
   {
 
 
@@ -47,7 +47,7 @@ private:
     m_device.set_colours(m_args_channel, colors);
   }
 
-  rclcpp::Subscription<blinkstick_msgs::msg::Blink>::SharedPtr m_subscriber;
+  rclcpp::Subscription<blinkstick_msgs::msg::Color>::SharedPtr m_subscriber;
   int m_led_count {0};
   int m_args_channel {0};
   blinkstick::device m_device = blinkstick::device(nullptr, blinkstick::device_type::unknown);
