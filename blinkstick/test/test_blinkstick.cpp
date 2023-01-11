@@ -20,7 +20,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "blinkstick_msgs/msg/color.hpp"
+#include "blinkstick_msgs/msg/color_array.hpp"
 #include <rclcpp/duration.hpp>
 
 using namespace std::chrono_literals;
@@ -34,7 +34,7 @@ public:
   BlinkstickTester()
   : Node("BlinkstickTester")
   {
-    m_publisher = this->create_publisher<blinkstick_msgs::msg::Color>("blinkstick", 10);
+    m_publisher = this->create_publisher<blinkstick_msgs::msg::ColorArray>("blinkstick", 10);
     m_timer = this->create_wall_timer(
       500ms, std::bind(&BlinkstickTester::m_timer_callback, this));
   }
@@ -42,17 +42,22 @@ public:
 private:
   void m_timer_callback()
   {
-    RCLCPP_INFO(this->get_logger(), "Timer callback: publishing");
-    auto message = blinkstick_msgs::msg::Color();
-    message.red = m_colors[0];
-    message.green = m_colors[1];
-    message.blue = m_colors[2];
-    m_publisher->publish(message);
-    std::rotate(m_colors.begin(), m_colors.begin() + 1, m_colors.end());
+    auto color_array = blinkstick_msgs::msg::ColorArray();
+    auto color = std_msgs::msg::ColorRGBA();
+    for (unsigned int i = 0; i < 2; ++i) {
+      color.a = 1.0;
+      color.r = m_colors[0];
+      color.g = m_colors[1];
+      color.b = m_colors[2];
+      color_array.colors.push_back(color);
+      std::rotate(m_colors.begin(), m_colors.begin() + 1, m_colors.end());
+    }
+    m_publisher->publish(color_array);
+    RCLCPP_INFO(this->get_logger(), "Publishing Color Array");
   }
 
   rclcpp::TimerBase::SharedPtr m_timer;
-  rclcpp::Publisher<blinkstick_msgs::msg::Color>::SharedPtr m_publisher;
+  rclcpp::Publisher<blinkstick_msgs::msg::ColorArray>::SharedPtr m_publisher;
   std::vector<unsigned int> m_colors {255, 0, 0};
 };
 

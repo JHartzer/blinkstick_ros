@@ -16,7 +16,7 @@
 #include <iostream>
 #include <memory>
 
-#include "blinkstick_msgs/msg/color.hpp"
+#include "blinkstick_msgs/msg/color_array.hpp"
 #include "blinkstick/device.hpp"
 #include "blinkstick/blinkstick.hpp"
 
@@ -31,7 +31,7 @@ public:
   {
     RCLCPP_INFO(this->get_logger(), "Initialize Node");
 
-    m_subscriber = this->create_subscription<blinkstick_msgs::msg::Color>(
+    m_subscriber = this->create_subscription<blinkstick_msgs::msg::ColorArray>(
       "blinkstick", 10, std::bind(&BlinkstickNode::topic_callback, this, _1));
 
     blinkstick::enable_logging();
@@ -42,23 +42,27 @@ public:
     }
 
     m_led_count = m_device.get_led_count();
+    rclcpp::on_shutdown(std::bind(&BlinkstickNode::shutdown, this));
   }
 
 private:
-  void topic_callback(const blinkstick_msgs::msg::Color::SharedPtr msg) const
+  void topic_callback(const blinkstick_msgs::msg::ColorArray::SharedPtr msg) const
   {
     std::vector<blinkstick::colour> colors(m_led_count);
-    std::string log = "Subscriber callback. Size: " + std::to_string(colors.size());
-    RCLCPP_INFO(this->get_logger(), log.c_str());
-    for (unsigned int i = 0; i < colors.size(); ++i) {
-      colors[i].red = msg.get()->red;
-      colors[i].green = msg.get()->green;
-      colors[i].blue = msg.get()->blue;
+    for (unsigned int i = 0; (i < colors.size() && i < msg.get()->colors.size()); ++i) {
+      colors[i].red = msg.get()->colors[i].r;
+      colors[i].green = msg.get()->colors[i].g;
+      colors[i].blue = msg.get()->colors[i].b;
     }
     m_device.set_colours(m_args_channel, colors);
   }
 
-  rclcpp::Subscription<blinkstick_msgs::msg::Color>::SharedPtr m_subscriber;
+  void shutdown()
+  {
+    m_device.off();
+  }
+
+  rclcpp::Subscription<blinkstick_msgs::msg::ColorArray>::SharedPtr m_subscriber;
   int m_led_count {0};
   int m_args_channel {0};
   blinkstick::device m_device = blinkstick::device(nullptr, blinkstick::device_type::unknown);
@@ -69,6 +73,5 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<BlinkstickNode>());
   rclcpp::shutdown();
-  blinkstick::finalise();
   return 0;
 }
