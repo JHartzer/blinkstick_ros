@@ -1,6 +1,6 @@
 # blinkstick_ros
 
-A c++ ROS driver for the [blinkstick](https://www.blinkstick.com/) built on the [blinkstickcpp](https://github.com/teekae/blinkstickcpp) package.
+A C++ ROS2 (Humble) driver for the [blinkstick](https://www.blinkstick.com/) built on the [blinkstickcpp](https://github.com/teekae/blinkstickcpp) package.
 
 ## Requirements
 - [ROS](https://docs.ros.org/en/humble/index.html)
